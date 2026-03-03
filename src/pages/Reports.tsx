@@ -1,11 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Download } from 'lucide-react';
+import { getCalculations } from '@/utils/storage';
+
+type Calculation = {
+  id: number;
+  order_no?: string;
+  created_at: string;
+  breakdown_json: string;
+  total_cost_try: number;
+};
 
 export default function Reports() {
-  const [calculations, setCalculations] = useState<any[]>([]);
+  const [calculations, setCalculations] = useState<Calculation[]>([]);
 
   useEffect(() => {
-    fetch('/api/calculations').then(r => r.json()).then(setCalculations);
+    setCalculations(getCalculations());
   }, []);
 
   const downloadCSV = () => {
@@ -19,20 +28,20 @@ export default function Reports() {
       'Paketleme (TRY)',
       'Overhead (TRY)',
       'Risk (TRY)',
-      'Komisyon (TRY)'
+      'Komisyon (TRY)',
     ];
 
-    const rows = calculations.map(calc => {
+    const rows = calculations.map((calc) => {
       const breakdown = JSON.parse(calc.breakdown_json);
       return [
         new Date(calc.created_at).toLocaleString('tr-TR'),
-        calc.order_no || 'Manuel',
+        calc.order_no ?? 'Manuel',
         calc.total_cost_try.toFixed(2),
         breakdown.labor.total.toFixed(2),
         breakdown.packaging.total.toFixed(2),
         breakdown.overhead.total.toFixed(2),
         breakdown.risk.total.toFixed(2),
-        breakdown.optional.total.toFixed(2)
+        breakdown.optional.total.toFixed(2),
       ].join(',');
     });
 
@@ -51,9 +60,10 @@ export default function Reports() {
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight text-zinc-900">Raporlar & Geçmiş</h1>
-        <button 
+        <button
           onClick={downloadCSV}
-          className="flex items-center px-4 py-2 bg-zinc-900 text-white rounded-xl font-medium hover:bg-zinc-800 transition-colors"
+          disabled={calculations.length === 0}
+          className="flex items-center px-4 py-2 bg-zinc-900 text-white rounded-xl font-medium hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Download className="w-4 h-4 mr-2" /> CSV İndir
         </button>
@@ -73,7 +83,7 @@ export default function Reports() {
             </tr>
           </thead>
           <tbody>
-            {calculations.map(calc => {
+            {calculations.map((calc) => {
               const breakdown = JSON.parse(calc.breakdown_json);
               return (
                 <tr key={calc.id} className="border-b border-zinc-50 hover:bg-zinc-50/50 transition-colors">
@@ -81,7 +91,7 @@ export default function Reports() {
                     {new Date(calc.created_at).toLocaleString('tr-TR')}
                   </td>
                   <td className="px-6 py-4 font-medium text-zinc-900">
-                    {calc.order_no || <span className="text-zinc-400 italic">Manuel</span>}
+                    {calc.order_no ?? <span className="text-zinc-400 italic">Manuel</span>}
                   </td>
                   <td className="px-6 py-4 text-right font-bold text-emerald-600">
                     ₺{calc.total_cost_try.toFixed(2)}

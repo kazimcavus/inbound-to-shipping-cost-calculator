@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
+import { getProducts, getPackagingProfiles } from '@/utils/storage';
 
 export default function Products() {
-  const [products, setProducts] = useState<any[]>([]);
-  const [profiles, setProfiles] = useState<any[]>([]);
+  const [products, setProducts] = useState<{ id: number; sku: string; name: string; category: string; default_packaging_profile_id: number }[]>([]);
+  const [profiles, setProfiles] = useState<{ id: number; name: string }[]>([]);
 
   useEffect(() => {
-    fetch('/api/products').then(r => r.json()).then(setProducts);
-    fetch('/api/packaging_profiles').then(r => r.json()).then(setProfiles);
+    setProducts(getProducts());
+    setProfiles(getPackagingProfiles());
   }, []);
 
   return (
@@ -26,8 +27,8 @@ export default function Products() {
             </tr>
           </thead>
           <tbody>
-            {products.map(product => {
-              const profile = profiles.find(p => p.id === product.default_packaging_profile_id);
+            {products.map((product) => {
+              const profile = profiles.find((p) => p.id === product.default_packaging_profile_id);
               return (
                 <tr key={product.id} className="border-b border-zinc-50 hover:bg-zinc-50/50 transition-colors">
                   <td className="px-6 py-4 font-mono text-zinc-600">{product.sku}</td>
@@ -41,6 +42,13 @@ export default function Products() {
                 </tr>
               );
             })}
+            {products.length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-6 py-8 text-center text-zinc-500">
+                  Henüz ürün eklenmemiş. Girdiler & Ayarlar sayfasından varsayılanları yükleyebilirsiniz.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
