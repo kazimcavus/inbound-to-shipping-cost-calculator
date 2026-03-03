@@ -1,12 +1,30 @@
+import fs from 'fs';
+import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
 import {defineConfig, loadEnv} from 'vite';
+
+/** GitHub Pages SPA fallback: 404.html redirects to index.html so React Router works */
+function ghPagesSPAFallback() {
+  return {
+    name: 'gh-pages-spa-fallback',
+    closeBundle() {
+      const outDir = path.resolve(__dirname, 'dist');
+      const indexPath = path.join(outDir, 'index.html');
+      const fallbackPath = path.join(outDir, '404.html');
+      if (fs.existsSync(indexPath)) {
+        fs.copyFileSync(indexPath, fallbackPath);
+      }
+    },
+  };
+}
 
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
+  const isProd = mode === 'production';
   return {
-    plugins: [react(), tailwindcss()],
+    base: isProd ? '/inbound-to-shipping-cost-calculator/' : '/',
+    plugins: [react(), tailwindcss(), ghPagesSPAFallback()],
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },

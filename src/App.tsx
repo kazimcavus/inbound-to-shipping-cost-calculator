@@ -42,7 +42,7 @@ function Sidebar() {
 
 export default function App() {
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <div className="flex min-h-screen bg-zinc-50 font-sans text-zinc-900">
         <Sidebar />
         <main className="flex-1 p-8 overflow-y-auto">

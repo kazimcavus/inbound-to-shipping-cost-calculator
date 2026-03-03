@@ -36,6 +36,16 @@ Uygulama varsayılan olarak \`http://localhost:3000\` adresinde çalışacaktır
 
 Uygulama ilk çalıştığında \`app.db\` adında bir SQLite veritabanı dosyası oluşturur ve içerisine örnek veriler (seed data) ekler. Bu veriler arasında örnek işçilik ücretleri, işlem adımları, paket malzemeleri, ürünler ve bir örnek sipariş bulunmaktadır.
 
+## GitHub Pages ile Yayınlama
+
+Proje GitHub Pages için yapılandırılmıştır.
+
+1. **GitHub Pages ayarları**: Repo → Settings → Pages → Source: **GitHub Actions**
+2. `main` dalına push yaptığınızda otomatik build ve deploy yapılır.
+3. Uygulama şu adresten erişilebilir: `https://<kullanıcı-adı>.github.io/inbound-to-shipping-cost-calculator/`
+
+> **Not**: GitHub Pages yalnızca statik dosyaları sunar. Backend API'si çalışmaz; verilerin görüntülenmesi için backend'i (Vercel, Railway, Render vb.) ayrıca barındırmanız gerekir.
+
 ## Proje Yapısı
 
 - \`/server.ts\`: Express backend sunucusu ve SQLite veritabanı işlemleri.
