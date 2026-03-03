@@ -1,0 +1,5 @@
+{
+  "name": "Mamul Kabul → Kargo Maliyet Hesaplama",
+  "description": "Bir ürünün mamul kabule girmesinden kargoya teslim edilmesine kadar oluşan tüm maliyetleri sipariş bazında hesaplayan uygulama.",
+  "requestFramePermissions": []
+}
